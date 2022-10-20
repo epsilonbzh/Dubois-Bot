@@ -1,9 +1,9 @@
-#Dubois Bot
+# Dubois Bot
 
 ## Commandes
-`/help` : liste des commandes
-`/quote` : dit une citation
-`/ping` : ping le bot
+- `/help` : liste des commandes
+- `/quote` : dit une citation
+- `/ping` : ping le bot
 
 ## Installation et lancement
 

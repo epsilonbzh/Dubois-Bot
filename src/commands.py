@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 from UserSWS import UserSWS
 
+
 class Commands(commands.Cog):
     def __init__(self, bot):
         self.bot: bot
@@ -22,36 +23,63 @@ class Commands(commands.Cog):
 
     @commands.command()
     async def quote(self, ctx):
-        quotes = open("data/quotes.txt","r").readlines()
-        choice = random.randint(0,len(quotes) - 1)
+        quotes = open("data/quotes.txt", "r").readlines()
+        choice = random.randint(0, len(quotes) - 1)
         await ctx.send(quotes[choice])
-       
+
     @commands.command()
     async def signe(self, ctx):
         try:
             await ctx.send("Signing in progress")
-            f = open("data/signature.json")
+            f = open("../data/signature.json")
 
             data = json.load(f)
-            for idUser in data:
-                res = "<@" + data[idUser]["discord"] + ">" + " error unable to sign"
+            for codeEtablisement in data:
+                for user in data["6021"]:
+                    res = "<@" + user["id"] + ">" + " error unable to sign"
+                    try:
+                        if user["autosign"]:
+                            userSWS = UserSWS(codeEtablisement=codeEtablisement,
+                                              codeIdentifiant=user["code_identifiant"],
+                                              codePin=user["code_pin"])
 
-                try:
-                    user = UserSWS(codeEtablisement=data[idUser]["code_etablisement"],
-                                codeIdentifiant=data[idUser]["code_identifiant"],
-                                codePin=data[idUser]["code_pin"], urlImage=data[idUser]["url_img"],
-                                discord=data[idUser]["discord"])
-
-                    if user.hasSigned():
-                        res = "<@" + data[idUser]["discord"] + ">" + " signature send"
-                except Exception as err:
-                    await ctx.send(err)
-
-                await ctx.send(res)
+                            if userSWS.hasSigned():
+                                res = res = "<@" + user["id"] + ">" + " signature send"
+                    except Exception as err:
+                        await ctx.send(err)
+                    await ctx.send(res)
 
             await ctx.send("all signatures done")
         except Exception as err:
-             await ctx.send(err)
+            await ctx.send(err)
+
+    @commands.command()
+    async def jesigne(self, ctx):
+        try:
+            f = open("../data/signature.json")
+            idUser = str(ctx.message.author.id)
+            data = json.load(f)
+            userSWS = -1
+            res = "<@" + idUser + ">"
+            for codeEtablisement in data:
+                for user in data[codeEtablisement]:
+                    if idUser == user["id"]:
+                        userSWS = UserSWS(codeEtablisement=codeEtablisement,
+                                          codeIdentifiant=user["code_identifiant"],
+                                          codePin=user["code_pin"])
+
+                if userSWS == -1:
+                    res += str(ctx.message.author) + " not in database, id : " + idUser
+                else:
+                    if userSWS.hasSigned():
+                        res += " signed"
+                    else:
+                        res += " error unable to sign"
+                await ctx.send(res)
+
+        except Exception as err:
+            await ctx.send(err)
+
 
 async def setup(bot):
     await bot.add_cog(Commands(bot))

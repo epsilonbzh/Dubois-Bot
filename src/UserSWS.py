@@ -18,17 +18,16 @@ class UserSWS:
     urlImage = ""
     discord = ""
 
-    def __init__(self, codeEtablisement, codeIdentifiant, codePin, urlImage, discord):
+    def __init__(self, codeEtablisement, codeIdentifiant, codePin):
         self.signed = False
         self.codeEtablisement = codeEtablisement
         self.codeIdentifiant = codeIdentifiant
         self.codePin = codePin
         self.urlImage = "data/default.png"
-        self.discord = discord
         self.setJBAuth()
         self.setBearer()
         # todo
-        self.signature()
+        # self.signature()
 
     def setJBAuth(self):
         concatenate = self.codeEtablisement + self.codeIdentifiant + self.codePin

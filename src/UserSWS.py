@@ -1,5 +1,6 @@
 import base64
 import json
+import random
 import time
 
 import requests
@@ -8,16 +9,6 @@ import requests
 class UserSWS:
     userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 " \
                 "Safari/537.36 Edg/106.0.1370.47 "
-    jsonSignature = {
-        "signedOn": "1970-01-01T01:00:00+00:00",
-        "collectedOn": "1970-01-01T01:00:00+00:00",
-        "status": "present",
-        "collectMode": "studentPortal",
-        "signer": -1,
-        "course": -1,
-        "place": 44,
-        "file": "img"
-    }
 
     codeEtablisement = ""
     codeIdentifiant = ""
@@ -32,13 +23,12 @@ class UserSWS:
         self.codeEtablisement = codeEtablisement
         self.codeIdentifiant = codeIdentifiant
         self.codePin = codePin
-        self.urlImage = urlImage
+        self.urlImage = "data/default.png"
         self.discord = discord
         self.setJBAuth()
         self.setBearer()
         # todo
         self.signature()
-
 
     def setJBAuth(self):
         concatenate = self.codeEtablisement + self.codeIdentifiant + self.codePin
@@ -69,8 +59,8 @@ class UserSWS:
         params = {'limit': 12}
         urlCheckClasses = "https://app.sowesign.com/api/student-portal/future-courses"
         data = requests.get(urlCheckClasses, params=params, headers=headers).content.decode('utf-8')
-        #tojson = json.loads(data.replace("'", '"'))
         tojson = json.loads(data)
+        # tojson = json.loads(data.replace("'", '"'))
         res = {}
         date = time.strftime("%Y-%m-%d", time.gmtime())
 
@@ -101,26 +91,46 @@ class UserSWS:
 
         return id_signer
 
+    def signaturetoBase64(self):
+        fimg = open(self.urlImage, "rb")
+        img_base64 = base64.b64encode(fimg.read()).decode("utf-8")
+
+        return img_base64
+
+    def getSignature(self):
+        headers = {'authorization': self.getTokenBearer(), 'User-Agent': self.userAgent}
+        params = {'from': "2022-09-25", 'to': "2022-10-24"}
+
+        urlCheckClasses = "https://app.sowesign.com/api/student-portal/courses"
+        data = requests.get(urlCheckClasses, params=params, headers=headers).content.decode('utf-8')
+
+        tojson = json.loads(data)
+
+        rnd = random.randint(0, len(tojson))
+        print(tojson[rnd]["signature"]["url"])
+        url = tojson[rnd]["signature"]["url"]
+
+        tmpurl = "data/tmp.png"
+        with open(tmpurl, 'wb') as handler:
+            handler.write(requests.get(url).content)
+
+        self.urlImage = tmpurl
+        return self.signaturetoBase64()
+
     def hasSigned(self):
         return self.signed
 
     def signature(self):
         url = "https://app.sowesign.com/api/student-portal/signatures"
 
-        fimg = open("data/" + self.urlImage, "rb")
-        img_base64 = base64.b64encode(fimg.read()).decode("utf-8")
-
         date = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
-
-        self.jsonSignature["collectedOn"] = date
-        self.jsonSignature["signedOn"] = date
-        self.jsonSignature["signer"] = self.getSigner()
-        self.jsonSignature["course"] = self.checkIdClasses()
-        self.jsonSignature["file"] = "data:image/png;base64," + img_base64
+        jsonSignature = {"place": (44,), "status": ("present",), "collectMode": ("studentPortal",), "collectedOn": date,
+                         "signedOn": date, "signer": self.getSigner(), "course": self.checkIdClasses(),
+                         "file": "data:image/png;base64," + self.getSignature()}
 
         headers = {'authorization': self.getTokenBearer(), 'User-Agent': self.userAgent}
         try:
-            r = requests.post(url, json=self.jsonSignature, headers=headers)
+            r = requests.post(url, json=jsonSignature, headers=headers)
             r.raise_for_status()
             self.signed = True
         except requests.exceptions.HTTPError as err:

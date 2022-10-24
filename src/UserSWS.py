@@ -37,7 +37,7 @@ class UserSWS:
         self.setJBAuth()
         self.setBearer()
         # todo
-        # self.signature()
+        self.signature()
 
 
     def setJBAuth(self):
@@ -69,8 +69,8 @@ class UserSWS:
         params = {'limit': 12}
         urlCheckClasses = "https://app.sowesign.com/api/student-portal/future-courses"
         data = requests.get(urlCheckClasses, params=params, headers=headers).content.decode('utf-8')
-        tojson = json.loads(data.replace("'", '"'))
-
+        #tojson = json.loads(data.replace("'", '"'))
+        tojson = json.loads(data)
         res = {}
         date = time.strftime("%Y-%m-%d", time.gmtime())
 

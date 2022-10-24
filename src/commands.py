@@ -1,4 +1,5 @@
 import random
+import json
 
 import discord
 from discord.ext import commands
@@ -25,29 +26,32 @@ class Commands(commands.Cog):
         choice = random.randint(0,len(quotes) - 1)
         await ctx.send(quotes[choice])
        
-@commands.command()
+    @commands.command()
     async def signe(self, ctx):
-        await ctx.send("Signing in progress")
-        f = open("data/signature.json")
+        try:
+            await ctx.send("Signing in progress")
+            f = open("data/signature.json")
 
-        data = json.load(f)
-        for idUser in data:
-            res = "<@" + data[idUser]["discord"] + ">" + " error unable to sign"
+            data = json.load(f)
+            for idUser in data:
+                res = "<@" + data[idUser]["discord"] + ">" + " error unable to sign"
 
-            try:
-                user = UserSWS(codeEtablisement=data[idUser]["code_etablisement"],
-                               codeIdentifiant=data[idUser]["code_identifiant"],
-                               codePin=data[idUser]["code_pin"], urlImage=data[idUser]["url_img"],
-                               discord=data[idUser]["discord"])
+                try:
+                    user = UserSWS(codeEtablisement=data[idUser]["code_etablisement"],
+                                codeIdentifiant=data[idUser]["code_identifiant"],
+                                codePin=data[idUser]["code_pin"], urlImage=data[idUser]["url_img"],
+                                discord=data[idUser]["discord"])
 
-                if user.hasSigned():
-                    res = "<@" + data[idUser]["discord"] + ">" + " signature send"
-            except Exception as err:
-                await ctx.send(err)
+                    if user.hasSigned():
+                        res = "<@" + data[idUser]["discord"] + ">" + " signature send"
+                except Exception as err:
+                    await ctx.send(err)
 
-            await ctx.send(res)
+                await ctx.send(res)
 
-        await ctx.send("all signatures done")
+            await ctx.send("all signatures done")
+        except Exception as err:
+             await ctx.send(err)
 
 async def setup(bot):
     await bot.add_cog(Commands(bot))

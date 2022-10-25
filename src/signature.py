@@ -13,13 +13,16 @@ async def sign(ctx, config = 0):
         for user in etablisement["users"]:
             res = "<@" + user["id"] + ">" + " error unable to sign"
             try:
-                if (user["autosign"] and config == 0) or ( str(ctx.message.author.id) == user["id"] and config == 1):
+                if (user["autosign"] == True and config == 0) or ( str(ctx.message.author.id) == user["id"] and config == 1):
                     userSWS = UserSWS(codeEtablisement=etablisement["codeEtablisement"],
                                       codeIdentifiant=user["code_identifiant"],
                                       codePin=user["code_pin"])
-
                     if userSWS.hasSigned():
                         res = res = "<@" + user["id"] + ">" + " signature send"
+                else:
+                    continue
+
+
             except Exception as err:
                 print(err)
                 await ctx.send(err)

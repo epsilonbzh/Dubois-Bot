@@ -27,7 +27,7 @@ class UserSWS:
         self.setJBAuth()
         self.setBearer()
         # todo
-        # self.signature()
+        self.signature()
 
     def setJBAuth(self):
         concatenate = self.codeEtablisement + self.codeIdentifiant + self.codePin
@@ -103,7 +103,7 @@ class UserSWS:
         tojson = json.loads(data)
 
         rnd = random.randint(0, len(tojson))
-        print(tojson[rnd]["signature"]["url"])
+        # print(tojson[rnd]["signature"]["url"])
         url = tojson[rnd]["signature"]["url"]
 
         tmpurl = "tmp.png"

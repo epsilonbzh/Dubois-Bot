@@ -16,11 +16,11 @@ hourSign = [time.fromisoformat('00:00:00')]
 # hourSign = [time.fromisoformat('08:21:00')]
 weekday = datetime.today().weekday()
 
-if {0, 1, 2, 4}.__contains__(weekday):
+if {0, 1, 2,3, 4}.__contains__(weekday):
     hourSign.append(time.fromisoformat('06:00:00'))
     hourSign.append(time.fromisoformat('07:45:00'))
     hourSign.append(time.fromisoformat('09:30:00'))
-if {0, 1, 2, 3, 4}.__contains__(weekday):
+if {0, 1, 2, 4}.__contains__(weekday):
     hourSign.append(time.fromisoformat('12:00:00'))
     hourSign.append(time.fromisoformat('13:45:00'))
 
@@ -28,7 +28,9 @@ if {0, 1, 2, 3, 4}.__contains__(weekday):
 # @tasks.loop(seconds=1)
 async def autosign():
     message_channel = bot.get_channel(target_channel_id)
+
     await signallC(message_channel)
+
 
 
 @autosign.before_loop

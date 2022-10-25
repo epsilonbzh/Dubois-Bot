@@ -1,19 +1,25 @@
 import json
 
-from src.UserSWS import UserSWS
+from UserSWS import UserSWS
 
 def loaddata():
-    f = open("../data/signature.json")
+    # f = open("../data/signature.json")
+    f = open("data/signature.json")
     return json.load(f)
 
 async def sign(ctx, config = 0):
+    idAuthor = -1
+    if (config == 1):
+        idAuthor = str(ctx.message.author.id)
+
     data = loaddata()
 
     for etablisement in data:
         for user in etablisement["users"]:
             res = "<@" + user["id"] + ">" + " error unable to sign"
             try:
-                if (user["autosign"] == True and config == 0) or ( str(ctx.message.author.id) == user["id"] and config == 1):
+
+                if (user["autosign"] == True and config == 0) or ( idAuthor == user["id"] and config == 1):
                     userSWS = UserSWS(codeEtablisement=etablisement["codeEtablisement"],
                                       codeIdentifiant=user["code_identifiant"],
                                       codePin=user["code_pin"])
@@ -21,7 +27,6 @@ async def sign(ctx, config = 0):
                         res = res = "<@" + user["id"] + ">" + " signature send"
                 else:
                     continue
-
 
             except Exception as err:
                 print(err)

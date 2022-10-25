@@ -1,7 +1,7 @@
 import random
 import discord
 from discord.ext import commands
-from src.signature import signmeC, signallC
+from signature import signmeC, signallC
 
 
 class Commands(commands.Cog):

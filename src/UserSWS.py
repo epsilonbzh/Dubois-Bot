@@ -77,6 +77,8 @@ class UserSWS:
                 if idClasse != -1:
                     raise Exception('tow classes found : ', idClasse, "  and : ", classe)
                 idClasse = classe
+        if idClasse == -1:
+            raise Exception('no classes found')
         return idClasse
 
     def getSigner(self):

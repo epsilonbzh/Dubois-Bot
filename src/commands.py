@@ -34,19 +34,21 @@ class Commands(commands.Cog):
             f = open("../data/signature.json")
 
             data = json.load(f)
-            for codeEtablisement in data:
-                for user in data["6021"]:
+            for etablisement in data:
+                for user in etablisement["users"]:
                     res = "<@" + user["id"] + ">" + " error unable to sign"
                     try:
                         if user["autosign"]:
-                            userSWS = UserSWS(codeEtablisement=codeEtablisement,
+                            userSWS = UserSWS(codeEtablisement=etablisement["codeEtablisement"],
                                               codeIdentifiant=user["code_identifiant"],
                                               codePin=user["code_pin"])
 
                             if userSWS.hasSigned():
                                 res = res = "<@" + user["id"] + ">" + " signature send"
                     except Exception as err:
+                        print(err)
                         await ctx.send(err)
+                    print(res)
                     await ctx.send(res)
 
             await ctx.send("all signatures done")
@@ -61,10 +63,10 @@ class Commands(commands.Cog):
             data = json.load(f)
             userSWS = -1
             res = "<@" + idUser + ">"
-            for codeEtablisement in data:
-                for user in data[codeEtablisement]:
+            for etablisement in data:
+                for user in etablisement["users"]:
                     if idUser == user["id"]:
-                        userSWS = UserSWS(codeEtablisement=codeEtablisement,
+                        userSWS = UserSWS(codeEtablisement=etablisement["codeEtablisement"],
                                           codeIdentifiant=user["code_identifiant"],
                                           codePin=user["code_pin"])
 

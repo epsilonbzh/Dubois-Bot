@@ -1,0 +1,13 @@
+[
+  {
+    "codeEtablisement": INTEGER,
+    "users": [
+      {
+        "id": INTEGER,
+        "code_identifiant": INTEGER,
+        "code_pin": INTEGER,
+        "autosign": BOOLEAN
+      }
+    ]
+  }
+]

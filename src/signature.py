@@ -3,7 +3,6 @@ import json
 from UserSWS import UserSWS
 
 def loaddata():
-    # f = open("../data/signature.json")
     f = open("data/signature.json")
     return json.load(f)
 

@@ -1,7 +1,7 @@
 import random
 import discord
 from discord.ext import commands
-from signature import signmeC, signallC
+from signature import signmeC, signallC, addautosignC, removeautosignC, listautosignC
 
 admins = [eval(i) for i in open("data/admins.txt", "r").readlines()]
 
@@ -22,7 +22,7 @@ class Commands(commands.Cog):
 
     @commands.command()
     async def quote(self, ctx):
-        quotes = open("data/quotes.txt", "r").readlines()
+        quotes = open("data/quotes.txt", 'w').readlines()
         choice = random.randint(0, len(quotes) - 1)
         await ctx.send(quotes[choice])
 
@@ -32,6 +32,18 @@ class Commands(commands.Cog):
             await signallC(ctx)
         else:
             await ctx.send("Nope")
+
+    @commands.command()
+    async def addautosign(self, ctx):
+        await addautosignC(ctx,str(ctx.author.id))
+
+    @commands.command()
+    async def removeautosign(self, ctx):
+            await removeautosignC(ctx, str(ctx.author.id))
+
+    @commands.command()
+    async def listautosign(self, ctx):
+            await listautosignC(ctx)
 
     @commands.command()
     async def signme(self, ctx):

@@ -3,7 +3,7 @@ import asyncio
 import discord
 from discord.ext import commands, tasks
 from datetime import datetime, time
-from src.signature import signallC
+from signature import signallC
 
 token = open("token.txt", "r").readlines()[0]
 

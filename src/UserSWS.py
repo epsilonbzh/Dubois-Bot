@@ -18,17 +18,16 @@ class UserSWS:
     urlImage = ""
     discord = ""
 
-    def __init__(self, codeEtablisement, codeIdentifiant, codePin, urlImage, discord):
+    def __init__(self, codeEtablisement, codeIdentifiant, codePin):
         self.signed = False
         self.codeEtablisement = codeEtablisement
         self.codeIdentifiant = codeIdentifiant
         self.codePin = codePin
         self.urlImage = "data/default.png"
-        self.discord = discord
         self.setJBAuth()
         self.setBearer()
         # todo
-        self.signature()
+        # self.signature()
 
     def setJBAuth(self):
         concatenate = self.codeEtablisement + self.codeIdentifiant + self.codePin
@@ -36,7 +35,6 @@ class UserSWS:
 
     def getTokenJBAuth(self):
         tokenJBAuth = "JBAuth " + self.JBAuth
-        # print(tokenJBAuth)
         return tokenJBAuth
 
     def setBearer(self):
@@ -51,7 +49,6 @@ class UserSWS:
 
     def getTokenBearer(self):
         tokenBearer = "Bearer " + self.Bearer
-        # print(tokenBearer)
         return tokenBearer
 
     def checkIdClasses(self):
@@ -60,19 +57,18 @@ class UserSWS:
         urlCheckClasses = "https://app.sowesign.com/api/student-portal/future-courses"
         data = requests.get(urlCheckClasses, params=params, headers=headers).content.decode('utf-8')
         tojson = json.loads(data)
-        # tojson = json.loads(data.replace("'", '"'))
         res = {}
         date = time.strftime("%Y-%m-%d", time.gmtime())
 
         for classe in tojson:
 
-            id = classe['id']
+            idC = classe['id']
 
             if classe['date'] == date:
-                res[id] = {}
-                res[id]['date'] = classe['date']
-                res[id]['start'] = classe['start']
-                res[id]['end'] = classe['end']
+                res[idC] = {}
+                res[idC]['date'] = classe['date']
+                res[idC]['start'] = classe['start']
+                res[idC]['end'] = classe['end']
 
         current_time = time.strftime("%H:%M:%S", time.gmtime())
         idClasse = -1
@@ -110,7 +106,7 @@ class UserSWS:
         print(tojson[rnd]["signature"]["url"])
         url = tojson[rnd]["signature"]["url"]
 
-        tmpurl = "data/tmp.png"
+        tmpurl = "tmp.png"
         with open(tmpurl, 'wb') as handler:
             handler.write(requests.get(url).content)
 
@@ -121,10 +117,11 @@ class UserSWS:
         return self.signed
 
     def signature(self):
+        r = -1
         url = "https://app.sowesign.com/api/student-portal/signatures"
 
         date = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
-        jsonSignature = {"place": (44,), "status": ("present",), "collectMode": ("studentPortal",), "collectedOn": date,
+        jsonSignature = {"place": 44, "status": "present", "collectMode": "studentPortal", "collectedOn": date,
                          "signedOn": date, "signer": self.getSigner(), "course": self.checkIdClasses(),
                          "file": "data:image/png;base64," + self.getSignature()}
 
@@ -135,7 +132,3 @@ class UserSWS:
             self.signed = True
         except requests.exceptions.HTTPError as err:
             raise Exception("http error" + r.content.decode("utf-8"))
-            # await ctx.send(r)
-            # await ctx.send(r.content)
-            # print(r)
-            # print(r.content)

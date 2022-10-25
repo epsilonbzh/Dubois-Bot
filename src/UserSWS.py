@@ -102,7 +102,7 @@ class UserSWS:
 
         tojson = json.loads(data)
 
-        rnd = random.randint(0, len(tojson))
+        rnd = random.randint(0, len(tojson) - 1)
         # print(tojson[rnd]["signature"]["url"])
         url = tojson[rnd]["signature"]["url"]
 

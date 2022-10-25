@@ -1,3 +1,4 @@
 discord.py==2.0.1
 requests~=2.28.1
 certifi~=2022.9.24
+schedule~=1.1.0

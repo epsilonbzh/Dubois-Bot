@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from signature import signmeC, signallC
 
+admins = [eval(i) for i in open("data/admins.txt", "r").readlines()]
 
 class Commands(commands.Cog):
     def __init__(self, bot):
@@ -27,7 +28,10 @@ class Commands(commands.Cog):
 
     @commands.command()
     async def signall(self, ctx):
-        await signallC(ctx)
+        if ctx.author.id in admins:
+            await signallC(ctx)
+        else:
+            await ctx.send("Nope")
 
     @commands.command()
     async def signme(self, ctx):

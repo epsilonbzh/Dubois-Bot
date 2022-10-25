@@ -8,7 +8,7 @@ def loaddata():
     return json.load(f)
 
 
-async def sign(ctx, config=0):
+async def signC(ctx, config=0):
     idAuthor = -1
     if (config == 1):
         idAuthor = str(ctx.message.author.id)
@@ -38,46 +38,38 @@ async def sign(ctx, config=0):
 
 async def signallC(ctx):
     await ctx.send("Signing in progress")
-    await sign(ctx, 0)
+    await signC(ctx, 0)
     await ctx.send("all signatures done")
 
 
 async def signmeC(ctx):
-    await sign(ctx, 1)
+    await signC(ctx, 1)
 
 
-async def changeautosigne(ctx, id, state):
+async def autosigneC(ctx, idDiscord, state):
     try:
         data = loaddata()
 
         for etablisement in data:
             for user in etablisement["users"]:
-                if (user["id"] == id):
+                if user["id"] == idDiscord:
                     user["autosign"] = state
 
         json_object = json.dumps(data, indent=4)
 
         with open("data/signature.json", "w") as outfile:
-            await ctx.send("toto")
             outfile.write(json_object)
 
-        await ctx.send("<@" + id + ">" + " set " + str(state) + " to autosign")
+        await ctx.send("<@" + idDiscord + ">" + " set " + str(state) + " to autosign")
     except Exception as err:
         await ctx.send(err)
-
-async def removeautosignC(ctx, id):
-    await changeautosigne(ctx,id,False)
 
 async def listautosignC(ctx):
     try:
         data = loaddata()
-        await ctx.send("toto")
         for etablisement in data:
             for user in etablisement["users"]:
-                # await ctx.send(user)
                 await ctx.send("<@" + user["id"] + ">" + " at " + str(user["autosign"]))
     except Exception as err:
         await ctx.send(err)
 
-async def addautosignC(ctx, id):
-    await changeautosigne(ctx,id,True)

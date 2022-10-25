@@ -1,7 +1,7 @@
 import random
 import discord
 from discord.ext import commands
-from signature import signmeC, signallC, addautosignC, removeautosignC, listautosignC
+from signature import signmeC, signallC, listautosignC, autosigneC
 
 admins = [eval(i) for i in open("data/admins.txt", "r").readlines()]
 
@@ -34,20 +34,20 @@ class Commands(commands.Cog):
             await ctx.send("Nope")
 
     @commands.command()
-    async def addautosign(self, ctx):
-        await addautosignC(ctx,str(ctx.author.id))
-
-    @commands.command()
-    async def removeautosign(self, ctx):
-            await removeautosignC(ctx, str(ctx.author.id))
-
-    @commands.command()
-    async def listautosign(self, ctx):
-            await listautosignC(ctx)
-
-    @commands.command()
     async def signme(self, ctx):
         await signmeC(ctx)
+
+    @commands.command()
+    async def autosignadd(self, ctx):
+        await autosigneC(ctx,str(ctx.author.id),True)
+
+    @commands.command()
+    async def autosignremove(self, ctx):
+            await autosigneC(ctx,str(ctx.author.id),False)
+
+    @commands.command()
+    async def autosignlist(self, ctx):
+            await listautosignC(ctx)
 
 
 async def setup(bot):

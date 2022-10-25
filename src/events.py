@@ -8,8 +8,11 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        print(message.content.upper())
         if message.content.startswith("/") or message.author.bot:
             return
+        elif "SQL" in message.content.upper():
+            await message.channel.send("https://tenor.com/view/man-drooling-mouth-gif-13239334")
         else:
             choice = random.randint(0, 50)
             if choice == 0 :

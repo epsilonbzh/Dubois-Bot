@@ -11,7 +11,7 @@ token = open("data/token.txt", "r").readlines()[0]
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='/', intents=intents, help_command=None)
-target_channel_id = 1032901511132487713
+target_channel_id = 1029791023804731392
 
 hourSign = [time.fromisoformat('06:00:00'), time.fromisoformat('07:45:00'), time.fromisoformat('09:30:00'),
             time.fromisoformat('12:00:00'), time.fromisoformat('13:45:00')]

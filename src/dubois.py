@@ -2,35 +2,28 @@ import asyncio
 
 import discord
 from discord.ext import commands, tasks
+import time
 from datetime import datetime, time
 from signature import signallC
 
-token = open("token.txt", "r").readlines()[0]
+token = open("data/token.txt", "r").readlines()[0]
 
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='/', intents=intents, help_command=None)
 target_channel_id = 1032901511132487713
 
-hourSign = [time.fromisoformat('00:00:00')]
-# hourSign = [time.fromisoformat('08:21:00')]
-weekday = datetime.today().weekday()
+hourSign = [time.fromisoformat('06:00:00'), time.fromisoformat('07:45:00'), time.fromisoformat('09:30:00'),
+            time.fromisoformat('12:00:00'), time.fromisoformat('13:45:00')]
 
-if {0, 1, 2,3, 4}.__contains__(weekday):
-    hourSign.append(time.fromisoformat('06:00:00'))
-    hourSign.append(time.fromisoformat('07:45:00'))
-    hourSign.append(time.fromisoformat('09:30:00'))
-if {0, 1, 2, 4}.__contains__(weekday):
-    hourSign.append(time.fromisoformat('12:00:00'))
-    hourSign.append(time.fromisoformat('13:45:00'))
 
 @tasks.loop(time=hourSign)
-# @tasks.loop(seconds=1)
 async def autosign():
     message_channel = bot.get_channel(target_channel_id)
-
-    await signallC(message_channel)
-
+    weekday = datetime.today().weekday()
+    if {0, 1, 2, 4}.__contains__(weekday) or (
+            {0, 1, 2, 3, 4}.__contains__(weekday) and (datetime.today().time() <= time.fromisoformat('11:00:00'))):
+        await signallC(message_channel)
 
 
 @autosign.before_loop

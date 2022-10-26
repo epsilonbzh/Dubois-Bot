@@ -1,0 +1,7 @@
+services:
+  bot:
+    container_name: dubois
+    build: .
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data

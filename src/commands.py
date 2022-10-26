@@ -22,7 +22,7 @@ class Commands(commands.Cog):
 
     @commands.command()
     async def quote(self, ctx):
-        quotes = open("data/quotes.txt", 'w').readlines()
+        quotes = open("data/quotes.txt", 'r').readlines()
         choice = random.randint(0, len(quotes) - 1)
         await ctx.send(quotes[choice])
 

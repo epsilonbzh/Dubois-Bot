@@ -2,13 +2,25 @@
 
 
 ## Commandes
+
+### Commandes de bases
 - `/help` : liste des commandes
 - `/quote` : dit une citation
 - `/ping` : ping le bot
 
+### Commandes SWS
+- `/signme` : signe sur SWS
+- `/autosignadd` : active la signature automatique
+- `/autosignremove` : désactive la signature automatique
+
 ## Installation et lancement
 
-/!\ Il faut créer un fichier "token.txt" à la racine du projet et y écrire le token dedans pour que le bot puisse s'identifier sur l'API. 
+/!\ Fichiers à rajouter et nécessaire pour le fonctionement : 
+ - data/token.txt : avec un token d'API Discord
+
+ Pour l'utilisation de SWS : 
+- admins.txt : avec les IDs Discord des admins (qui peuvent utiliser certaines commandes)
+- signature.json : avec les codes SWS, la structure est présente dans "structSigature.json"
 
 ### Installation classique
 ```bash

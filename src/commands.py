@@ -14,6 +14,9 @@ class Commands(commands.Cog):
         embed = discord.Embed(title="Liste des commandes :", color=0x3498db)
         embed.add_field(name="quote", value="dit une citation", inline=False)
         embed.add_field(name="ping", value="ping le bot", inline=False)
+        embed.add_field(name="signme", value="signe sur SWS", inline=False)
+        embed.add_field(name="autosignadd", value="active la signature automatique", inline=False)
+        embed.add_field(name="autosignremove", value="désactive la signature automatique", inline=False)
         await ctx.send(embed=embed)
 
     @commands.command()

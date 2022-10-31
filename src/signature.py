@@ -64,12 +64,16 @@ async def autosigneC(ctx, idDiscord, state):
     except Exception as err:
         await ctx.send(err)
 
-async def listautosignC(ctx):
+async def listautosignC(ctx,embed):
     try:
         data = loaddata()
         for etablisement in data:
             for user in etablisement["users"]:
-                await ctx.send("<@" + user["id"] + ">" + " at " + str(user["autosign"]))
+                if ctx.author.id == int(user["id"]):
+                    embed.add_field(name=user["name"] + " (toi)", value=("❌","✅")[user["autosign"]], inline=False)
+                else:
+                    embed.add_field(name=user["name"], value=("❌","✅")[user["autosign"]], inline=False)
     except Exception as err:
         await ctx.send(err)
+    return embed
 

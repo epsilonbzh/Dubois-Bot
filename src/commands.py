@@ -50,7 +50,9 @@ class Commands(commands.Cog):
 
     @commands.command()
     async def autosignlist(self, ctx):
-            await listautosignC(ctx)
+        embed = discord.Embed(title="Auto sign :", color=0xe67e22)
+        embed = await listautosignC(ctx,embed)
+        await ctx.send(embed=embed)
 
 
 async def setup(bot):

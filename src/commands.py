@@ -17,6 +17,7 @@ class Commands(commands.Cog):
         embed.add_field(name="signme", value="signe sur SWS", inline=False)
         embed.add_field(name="autosignadd", value="active la signature automatique", inline=False)
         embed.add_field(name="autosignremove", value="désactive la signature automatique", inline=False)
+        embed.add_field(name="autosignlist", value="liste les personnes inscrites à la signature automatique", inline=False)
         await ctx.send(embed=embed)
 
     @commands.command()

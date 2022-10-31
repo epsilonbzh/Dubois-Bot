@@ -12,6 +12,9 @@
 - `/signme` : signe sur SWS
 - `/autosignadd` : active la signature automatique
 - `/autosignremove` : désactive la signature automatique
+- `/autosignlist` : liste les personnes inscrites à la signature automatique
+#### Admin seulement :
+- `/signall` : signe manuellement les personnes en signature auto
 
 ## Installation et lancement
 

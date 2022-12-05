@@ -38,14 +38,18 @@ python3 src/dubois.py
 ```bash
 # Nécessite les droits root
 # Installation :
-docker build . -t dubois-bot
+docker 
 
 #Lancement :
-docker run --name dubois -d dubois-bot
+docker compose up -d --build
 
 # Actualisation des sources :
-docker cp . dubois:/app
-docker restart dubois
+docker compose restart
+
+# Actualisation du docker :
+docker compose down
+docker compose up -d --build
+
 
 # Les logs sont accessibles avec : 
 docker logs dubois

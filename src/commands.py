@@ -1,9 +1,10 @@
 import random
 import discord
 from discord.ext import commands
-from signature import signmeC, signallC, listautosignC, autosigneC
+from signature import signmeC, signallC, listautosignC, autosigneC, whoSignedC
 
 admins = [eval(i) for i in open("data/admins.txt", "r").readlines()]
+
 
 class Commands(commands.Cog):
     def __init__(self, bot):
@@ -42,17 +43,21 @@ class Commands(commands.Cog):
         await signmeC(ctx)
 
     @commands.command()
+    async def whosigned(self, ctx):
+        await whoSignedC(ctx)
+
+    @commands.command()
     async def autosignadd(self, ctx):
-        await autosigneC(ctx,str(ctx.author.id),True)
+        await autosigneC(ctx, str(ctx.author.id), True)
 
     @commands.command()
     async def autosignremove(self, ctx):
-            await autosigneC(ctx,str(ctx.author.id),False)
+        await autosigneC(ctx, str(ctx.author.id), False)
 
     @commands.command()
     async def autosignlist(self, ctx):
         embed = discord.Embed(title="Auto sign :", color=0xe67e22)
-        embed = await listautosignC(ctx,embed)
+        embed = await listautosignC(ctx, embed)
         await ctx.send(embed=embed)
 
 

@@ -21,11 +21,16 @@ async def signC(ctx, config=0):
             try:
 
                 if (user["autosign"] == True and config == 0) or (idAuthor == user["id"] and config == 1):
+
                     userSWS = UserSWS(codeEtablisement=etablisement["codeEtablisement"],
                                       codeIdentifiant=user["code_identifiant"],
                                       codePin=user["code_pin"])
                     if userSWS.hasSigned():
-                        res = res = "<@" + user["id"] + ">" + " signature send"
+                        res = res = "<@" + user["id"] + ">" + " already sign"
+                    else:
+                        userSWS.signature()
+                        if userSWS.hasSigned():
+                            res = res = "<@" + user["id"] + ">" + " signature send"
                 else:
                     continue
 

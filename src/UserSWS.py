@@ -26,8 +26,7 @@ class UserSWS:
         self.urlImage = "data/default.png"
         self.setJBAuth()
         self.setBearer()
-        # todo
-        self.signature()
+        # self.signature()
 
     def setJBAuth(self):
         concatenate = self.codeEtablisement + self.codeIdentifiant + self.codePin
@@ -116,9 +115,21 @@ class UserSWS:
         return self.signaturetoBase64()
 
     def hasSigned(self):
+        headers = {'authorization': self.getTokenBearer(), 'User-Agent': self.userAgent}
+        urlCheckClasses = "https://app.sowesign.com/api/student-portal/courses/5912/assiduity"
+        data = requests.get(urlCheckClasses, headers=headers).content.decode('utf-8')
+        tojson = json.loads(data)
+
+        if str(tojson["url"]) != "" and str(tojson["status"]) == "present":
+            self.signed = True
+        else :
+            self.signed = False
+
         return self.signed
 
     def signature(self):
+        if self.hasSigned():
+            raise Exception("already sign")
         r = -1
         url = "https://app.sowesign.com/api/student-portal/signatures"
 
@@ -131,6 +142,5 @@ class UserSWS:
         try:
             r = requests.post(url, json=jsonSignature, headers=headers)
             r.raise_for_status()
-            self.signed = True
         except requests.exceptions.HTTPError as err:
             raise Exception("http error" + r.content.decode("utf-8"))

@@ -10,23 +10,15 @@ class UserSWS:
     userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 " \
                 "Safari/537.36 Edg/106.0.1370.47 "
 
-    codeEtablisement = ""
-    codeIdentifiant = ""
-    codePin = ""
-    JBAuth = ""
-    Bearer = ""
-    urlImage = ""
-    discord = ""
 
     def __init__(self, codeEtablisement, codeIdentifiant, codePin):
-        self.signed = False
         self.codeEtablisement = codeEtablisement
         self.codeIdentifiant = codeIdentifiant
         self.codePin = codePin
         self.urlImage = "data/default.png"
         self.setJBAuth()
         self.setBearer()
-        # self.signature()
+        self.idClasse = -1
 
     def setJBAuth(self):
         concatenate = self.codeEtablisement + self.codeIdentifiant + self.codePin
@@ -51,34 +43,37 @@ class UserSWS:
         return tokenBearer
 
     def checkIdClasses(self):
-        headers = {'authorization': self.getTokenBearer(), 'User-Agent': self.userAgent}
-        params = {'limit': 12}
-        urlCheckClasses = "https://app.sowesign.com/api/student-portal/future-courses"
-        data = requests.get(urlCheckClasses, params=params, headers=headers).content.decode('utf-8')
-        tojson = json.loads(data)
-        res = {}
-        date = time.strftime("%Y-%m-%d", time.gmtime())
+        if self.idClasse == -1:
+            headers = {'authorization': self.getTokenBearer(), 'User-Agent': self.userAgent}
+            params = {'limit': 12}
+            urlCheckClasses = "https://app.sowesign.com/api/student-portal/future-courses"
+            data = requests.get(urlCheckClasses, params=params, headers=headers).content.decode('utf-8')
+            tojson = json.loads(data)
+            res = {}
+            date = time.strftime("%Y-%m-%d", time.gmtime())
 
-        for classe in tojson:
+            for classe in tojson:
 
-            idC = classe['id']
+                idC = classe['id']
 
-            if classe['date'] == date:
-                res[idC] = {}
-                res[idC]['date'] = classe['date']
-                res[idC]['start'] = classe['start']
-                res[idC]['end'] = classe['end']
+                if classe['date'] == date:
+                    res[idC] = {}
+                    res[idC]['date'] = classe['date']
+                    res[idC]['start'] = classe['start']
+                    res[idC]['end'] = classe['end']
 
-        current_time = time.strftime("%H:%M:%S", time.gmtime())
-        idClasse = -1
-        for classe in res:
-            if res[classe]['end'] > current_time > res[classe]['start']:
-                if idClasse != -1:
-                    raise Exception('tow classes found : ', idClasse, "  and : ", classe)
-                idClasse = classe
-        if idClasse == -1:
-            raise Exception('no classes found')
-        return idClasse
+            current_time = time.strftime("%H:%M:%S", time.gmtime())
+            idClasse = -1
+            for classe in res:
+                if res[classe]['end'] > current_time > res[classe]['start']:
+                    if idClasse != -1:
+                        raise Exception('tow classes found : ', idClasse, "  and : ", classe)
+                    idClasse = classe
+            if idClasse == -1:
+                raise Exception('no classes found')
+            self.idClasse = idClasse
+
+        return self.idClasse
 
     def getSigner(self):
         toutf8 = self.getTokenBearer().split('.')[1].encode('utf-8')
@@ -104,7 +99,6 @@ class UserSWS:
         tojson = json.loads(data)
 
         rnd = random.randint(0, len(tojson) - 1)
-        # print(tojson[rnd]["signature"]["url"])
         url = tojson[rnd]["signature"]["url"]
 
         tmpurl = "tmp.png"
@@ -116,16 +110,15 @@ class UserSWS:
 
     def hasSigned(self):
         headers = {'authorization': self.getTokenBearer(), 'User-Agent': self.userAgent}
-        urlCheckClasses = "https://app.sowesign.com/api/student-portal/courses/5912/assiduity"
-        data = requests.get(urlCheckClasses, headers=headers).content.decode('utf-8')
-        tojson = json.loads(data)
+        urlCheckClasses = "https://app.sowesign.com/api/student-portal/courses/ "+str(self.checkIdClasses())+"/assiduity"
+        request = requests.get(urlCheckClasses, headers=headers)
+        if request.status_code == 200:
+            data = request.content.decode('utf-8')
+            tojson = json.loads(data)
+            if str(tojson["url"]) != "" and str(tojson["status"]) == "present":
+                return True
 
-        if str(tojson["url"]) != "" and str(tojson["status"]) == "present":
-            self.signed = True
-        else :
-            self.signed = False
-
-        return self.signed
+        return False
 
     def signature(self):
         if self.hasSigned():

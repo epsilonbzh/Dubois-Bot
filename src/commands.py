@@ -1,3 +1,4 @@
+import asyncio
 import random
 import discord
 from discord.ext import commands
@@ -19,7 +20,7 @@ class Commands(commands.Cog):
         embed.add_field(name="autosignadd", value="Active la signature automatique", inline=False)
         embed.add_field(name="autosignremove", value="Désactive la signature automatique", inline=False)
         embed.add_field(name="autosignlist", value="Liste les personnes inscrites à la signature automatique", inline=False)
-        embed.add_field(name="saveme", value="Surprime la signature ou enlève le code pour nous sauver Delphine", inline=False)
+        embed.add_field(name="saveme", value="Surprime la signature ou enlève le code pour nous sauver de Delphine", inline=False)
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -65,6 +66,18 @@ class Commands(commands.Cog):
         embed = discord.Embed(title="Auto sign :", color=0xe67e22)
         embed = await listautosignC(ctx, embed)
         await ctx.send(embed=embed)
+
+    @commands.command()
+    async def pc(self, ctx):
+        try:
+            for n in range(3,0,-1):
+                await ctx.send(n)
+                await asyncio.sleep(1)
+        except Exception as err:
+            await ctx.send(err)
+
+
+
 
 
 async def setup(bot):

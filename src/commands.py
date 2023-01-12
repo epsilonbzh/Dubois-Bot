@@ -13,7 +13,7 @@ class Commands(commands.Cog):
     @commands.command()
     async def help(self, ctx):
         embed = discord.Embed(title="Liste des commandes :", color=0x3498db)
-        embed.add_field(name="quote", value="Pit une citation", inline=False)
+        embed.add_field(name="quote", value="Dit une citation", inline=False)
         embed.add_field(name="ping", value="Ping le bot", inline=False)
         embed.add_field(name="signme", value="Signe sur SWS", inline=False)
         embed.add_field(name="autosignadd", value="Active la signature automatique", inline=False)

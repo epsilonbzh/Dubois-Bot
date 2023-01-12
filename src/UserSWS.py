@@ -146,7 +146,7 @@ class UserSWS:
         url = "https://app.sowesign.com/api/student-portal/signatures"
 
         date = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
-        jsonSignature = {"place": 44, "status": "rattrapage", "collectMode": "studentPortal", "collectedOn": date,
+        jsonSignature = {"place": 44, "status": "oupsii", "collectMode": "studentPortal", "collectedOn": date,
                          "signedOn": date, "signer": self.getSigner(), "course": self.checkIdClasses(), }
 
         headers = {'authorization': self.getTokenBearer(), 'User-Agent': self.userAgent}

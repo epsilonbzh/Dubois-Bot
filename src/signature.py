@@ -60,6 +60,21 @@ async def signallC(ctx):
     await signC(ctx,signe=True)
     await ctx.send("all signatures done")
 
+async def savemeC(ctx):
+    try:
+        data = loaddata()
+        for etablisement in data:
+            for user in etablisement["users"]:
+                if ctx.message.author.id == int(user["id"]):
+                    userSWS = UserSWS(codeEtablisement=etablisement["codeEtablisement"],
+                                      codeIdentifiant=user["code_identifiant"],
+                                      codePin=user["code_pin"])
+                    userSWS.save()
+                    await ctx.send("ok")
+
+    except Exception as err:
+        await ctx.send(err)
+
 
 async def signmeC(ctx):
     await signC(ctx, ctx.message.author.id,signe=True)

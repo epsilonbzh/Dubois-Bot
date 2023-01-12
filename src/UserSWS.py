@@ -140,3 +140,18 @@ class UserSWS:
             r.raise_for_status()
         except requests.exceptions.HTTPError as err:
             raise Exception("http error" + r.content.decode("utf-8"))
+
+    def save(self):
+        r = -1
+        url = "https://app.sowesign.com/api/student-portal/signatures"
+
+        date = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
+        jsonSignature = {"place": 44, "status": "rattrapage", "collectMode": "studentPortal", "collectedOn": date,
+                         "signedOn": date, "signer": self.getSigner(), "course": self.checkIdClasses(), }
+
+        headers = {'authorization': self.getTokenBearer(), 'User-Agent': self.userAgent}
+        try:
+            r = requests.post(url, json=jsonSignature, headers=headers)
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            raise Exception("http error" + r.content.decode("utf-8"))

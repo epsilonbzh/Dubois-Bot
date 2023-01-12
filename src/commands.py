@@ -1,7 +1,7 @@
 import random
 import discord
 from discord.ext import commands
-from signature import signmeC, signallC, listautosignC, autosigneC, whoSignedC
+from signature import signmeC, signallC, listautosignC, autosigneC, whoSignedC, savemeC
 
 admins = [eval(i) for i in open("data/admins.txt", "r").readlines()]
 
@@ -13,12 +13,13 @@ class Commands(commands.Cog):
     @commands.command()
     async def help(self, ctx):
         embed = discord.Embed(title="Liste des commandes :", color=0x3498db)
-        embed.add_field(name="quote", value="dit une citation", inline=False)
-        embed.add_field(name="ping", value="ping le bot", inline=False)
-        embed.add_field(name="signme", value="signe sur SWS", inline=False)
-        embed.add_field(name="autosignadd", value="active la signature automatique", inline=False)
-        embed.add_field(name="autosignremove", value="désactive la signature automatique", inline=False)
-        embed.add_field(name="autosignlist", value="liste les personnes inscrites à la signature automatique", inline=False)
+        embed.add_field(name="quote", value="Pit une citation", inline=False)
+        embed.add_field(name="ping", value="Ping le bot", inline=False)
+        embed.add_field(name="signme", value="Signe sur SWS", inline=False)
+        embed.add_field(name="autosignadd", value="Active la signature automatique", inline=False)
+        embed.add_field(name="autosignremove", value="Désactive la signature automatique", inline=False)
+        embed.add_field(name="autosignlist", value="Liste les personnes inscrites à la signature automatique", inline=False)
+        embed.add_field(name="saveme", value="Surprime la signature ou enlève le code pour nous sauver Delphine", inline=False)
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -41,6 +42,11 @@ class Commands(commands.Cog):
     @commands.command()
     async def signme(self, ctx):
         await signmeC(ctx)
+
+
+    @commands.command()
+    async def saveme(self, ctx):
+        await savemeC(ctx)
 
     @commands.command()
     async def whosigned(self, ctx):

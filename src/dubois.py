@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands, tasks
 import time
 from datetime import datetime, time
-from signature import signallC
+from signature import signall_c
 
 token = open("data/token.txt", "r").readlines()[0]
 
@@ -15,8 +15,6 @@ target_channel_id = 1029791023804731392
 
 hourSign = [time.fromisoformat('07:15:00'), time.fromisoformat('09:00:00'), time.fromisoformat('10:45:00'),
             time.fromisoformat('13:15:00'), time.fromisoformat('15:00:00')]
-# hourSign = [time.fromisoformat('06:00:00'),time.fromisoformat('12:00:00')]
-# hourSign = [time.fromisoformat('06:45:00'), time.fromisoformat('11:45:00')]
 
 
 @tasks.loop(time=hourSign)
@@ -26,7 +24,7 @@ async def autosign():
 
     if {0, 1, 2, 4}.__contains__(weekday) or (
             {0, 1, 2, 3, 4}.__contains__(weekday) and (datetime.today().time() <= time.fromisoformat('11:00:00'))):
-        await signallC(message_channel)
+        await signall_c(message_channel)
 
 
 @autosign.before_loop

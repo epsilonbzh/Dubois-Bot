@@ -13,16 +13,24 @@ class SwsException(Exception):
 class UserSWS:
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62"
 
-    def __init__(self, code_etablisement, code_identifiant, code_pin):
+    def __init__(self, name, code_etablisement, code_identifiant, code_pin, autosign):
         self.jbauth = None
         self.bearer = None
+        self.name = name
         self.code_etablisement = code_etablisement
         self.code_identifiant = code_identifiant
         self.code_pin = code_pin
+        self.autosign = autosign
         self.url_image = "data/default.png"
         self.set_jbauth()
         self.set_bearer()
         self.id_classe = -1
+
+    def get_autosign(self):
+        return self.autosign
+
+    def get_name(self):
+        return self.name
 
     def set_jbauth(self):
         concatenate = self.code_etablisement + self.code_identifiant + self.code_pin

@@ -23,23 +23,6 @@ def load_users() -> dict:
     return users_sws
 
 
-def check_signed(user_sws: UserSWS) -> str:
-    return "✅" if user_sws.has_signed() else "❌"
-
-
-def signe(user_sws: UserSWS) -> str:
-    res = "❌"
-
-    if user_sws.has_signed():
-        res = "☑"
-    else:
-        user_sws.signature()
-        if user_sws.has_signed():
-            res = "✅"
-
-    return res
-
-
 async def signall_c(ctx):
     await ctx.send("Signing in progress")
 
@@ -49,10 +32,10 @@ async def signall_c(ctx):
     try:
         users = load_users()
 
-        for key, value in users.items():
-            if value.get_autosign():
-                res = signe(user_sws=value)
-                embed.add_field(name=value.get_name(), value=res, inline=False)
+        for key, user_sws in users.items():
+            if user_sws.get_autosign():
+                res = user_sws.signe()
+                embed.add_field(name=user_sws.get_name(), value=res, inline=False)
 
     except Exception as err:
         await ctx.send(err)
@@ -81,10 +64,10 @@ async def signme_c(ctx):
     try:
         users = load_users()
 
-        for key, value in users.items():
+        for key, user_sws in users.items():
             if ctx.message.author.id == int(key):
-                res = signe(user_sws=value)
-                embed.add_field(name=value.get_name(), value=res)
+                res = user_sws.signe()
+                embed.add_field(name=user_sws.get_name(), value=res)
 
 
     except Exception as err:
@@ -100,9 +83,9 @@ async def whosigned_c(ctx):
     try:
         users = load_users()
 
-        for key, value in users.items():
-            res = check_signed(user_sws=value)
-            embed.add_field(name=value.get_name(), value=res, inline=False)
+        for key, user_sws in users.items():
+            res = user_sws.check_signed()
+            embed.add_field(name=user_sws.get_name(), value=res, inline=False)
 
     except Exception as err:
         await ctx.send(err)

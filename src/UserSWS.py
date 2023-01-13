@@ -52,6 +52,21 @@ class UserSWS:
     def get_token_bearer(self):
         return "Bearer " + self.bearer
 
+    def check_signed(self) -> str:
+        return "✅" if self.has_signed() else "❌"
+
+    def signe(self) -> str:
+        res = "❌"
+
+        if self.has_signed():
+            res = "☑"
+        else:
+            self.signature()
+            if self.has_signed():
+                res = "✅"
+
+        return res
+
     def set_id_classe(self):
         headers = {'authorization': self.get_token_bearer(), 'User-Agent': self.user_agent}
         params = {'limit': 12}

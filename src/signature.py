@@ -5,92 +5,101 @@ import discord
 from UserSWS import UserSWS
 
 
-def loaddata():
+def load_data():
     f = open("data/signature.json")
     return json.load(f)
 
 
-async def signC(ctx, idUser = -1, signe : bool = False):
-    embed = discord.Embed(color=0xe67e22)
-    if signe:
-        embed.title = "Signature send"
-    else:
-        embed.title = "Who signed"
-
-    data = loaddata()
+def load_users() -> dict:
+    data = load_data()
+    users_sws = dict()
 
     for etablisement in data:
         for user in etablisement["users"]:
-            name = user["name"]
-            if idUser == int(user["id"]):
-                name += " (toi)"
-            value = "❌"
+            users_sws[user["id"]] = UserSWS(user["name"], code_etablisement=etablisement["codeEtablisement"],
+                                            code_identifiant=user["code_identifiant"],
+                                            code_pin=user["code_pin"], autosign=user["autosign"])
 
-            try:
-                if not signe or (user["autosign"] == True and idUser == -1) or (idUser == int(user["id"])):
+    return users_sws
 
-                    userSWS = UserSWS(codeEtablisement=etablisement["codeEtablisement"],
-                                      codeIdentifiant=user["code_identifiant"],
-                                      codePin=user["code_pin"])
 
-                    if signe:
-                        if (user["autosign"] == True and idUser == -1) or (idUser == int(user["id"])):
-                            if userSWS.hasSigned():
-                                value="☑"
-                            else:
-                                userSWS.signature()
-                                if userSWS.hasSigned():
-                                    value="✅"
-                    else:
-                        if userSWS.hasSigned():
-                            value ="✅"
-                    embed.add_field(name=name, value=value, inline=False)
-                else:
-                    continue
-            except Exception as err:
-                print(err)
-                await ctx.send(err)
+async def signall_c(ctx):
+    await ctx.send("Signing in progress")
 
+    embed = discord.Embed(color=0xe67e22)
+    embed.title = "Signature send"
+
+    try:
+        users = load_users()
+
+        for key, user_sws in users.items():
+            if user_sws.get_autosign():
+                res = user_sws.signe()
+                embed.add_field(name=user_sws.get_name(), value=res, inline=False)
+
+    except Exception as err:
+        await ctx.send(err)
 
     await ctx.send(embed=embed)
-
-
-async def signallC(ctx):
-    await ctx.send("Signing in progress")
-    await signC(ctx,signe=True)
     await ctx.send("all signatures done")
 
-async def savemeC(ctx):
+
+async def saveme_c(ctx):
     try:
-        data = loaddata()
-        for etablisement in data:
-            for user in etablisement["users"]:
-                if ctx.message.author.id == int(user["id"]):
-                    userSWS = UserSWS(codeEtablisement=etablisement["codeEtablisement"],
-                                      codeIdentifiant=user["code_identifiant"],
-                                      codePin=user["code_pin"])
-                    userSWS.save()
-                    await ctx.send("ok")
+        users = load_users()
+
+        for key, value in users.items():
+            if ctx.message.author.id == int(key):
+                value.save()
+                await ctx.send("<@" + str(ctx.message.author.id) + "> ouf on a eu chaud")
 
     except Exception as err:
         await ctx.send(err)
 
 
-async def signmeC(ctx):
-    await signC(ctx, ctx.message.author.id,signe=True)
+async def signme_c(ctx):
+    embed = discord.Embed(color=0xe67e22)
+    embed.title = "Who signed"
 
-
-async def whoSignedC(ctx):
-    await signC(ctx, ctx.message.author.id)
-
-
-async def autosigneC(ctx, idDiscord, state):
     try:
-        data = loaddata()
+        users = load_users()
+
+        for key, user_sws in users.items():
+            if ctx.message.author.id == int(key):
+                res = user_sws.signe()
+                embed.add_field(name=user_sws.get_name(), value=res)
+
+
+    except Exception as err:
+        await ctx.send(err)
+
+    await ctx.send(embed=embed)
+
+
+async def whosigned_c(ctx):
+    embed = discord.Embed(color=0xe67e22)
+    embed.title = "Who signed"
+
+    try:
+        users = load_users()
+
+        for key, user_sws in users.items():
+            res = user_sws.check_signed()
+            embed.add_field(name=user_sws.get_name(), value=res, inline=False)
+
+    except Exception as err:
+        await ctx.send(err)
+
+    await ctx.send(embed=embed)
+
+
+async def autosigne_c(ctx, id_discord, state):
+    try:
+        data = load_data()
 
         for etablisement in data:
             for user in etablisement["users"]:
-                if user["id"] == idDiscord:
+                if user["id"] == id_discord:
                     user["autosign"] = state
 
         json_object = json.dumps(data, indent=4)
@@ -98,20 +107,20 @@ async def autosigneC(ctx, idDiscord, state):
         with open("data/signature.json", "w") as outfile:
             outfile.write(json_object)
 
-        await ctx.send("<@" + idDiscord + ">" + " set " + str(state) + " to autosign")
+        await ctx.send("<@" + id_discord + ">" + " set " + str(state) + " to autosign")
     except Exception as err:
         await ctx.send(err)
 
-async def listautosignC(ctx,embed):
+
+async def listautosign_c(ctx, embed):
     try:
-        data = loaddata()
+        data = load_data()
         for etablisement in data:
             for user in etablisement["users"]:
                 if ctx.author.id == int(user["id"]):
-                    embed.add_field(name=user["name"] + " (toi)", value=("❌","✅")[user["autosign"]], inline=False)
+                    embed.add_field(name=user["name"] + " (toi)", value=("❌", "✅")[user["autosign"]], inline=False)
                 else:
-                    embed.add_field(name=user["name"], value=("❌","✅")[user["autosign"]], inline=False)
+                    embed.add_field(name=user["name"], value=("❌", "✅")[user["autosign"]], inline=False)
     except Exception as err:
         await ctx.send(err)
     return embed
-

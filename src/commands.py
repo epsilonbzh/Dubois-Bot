@@ -2,7 +2,7 @@ import asyncio
 import random
 import discord
 from discord.ext import commands
-from signature import signme_c, signall_c, listautosign_c, autosigne_c, whosigned_c, saveme_c
+from signature import signme_c, signall_c, listautosign_c, autosigne_c, whosigned_c, saveme_c, justifyme_c
 
 admins = [eval(i) for i in open("data/admins.txt", "r").readlines()]
 
@@ -22,6 +22,8 @@ class Commands(commands.Cog):
         embed.add_field(name="autosignlist", value="Liste les personnes inscrites à la signature automatique",
                         inline=False)
         embed.add_field(name="saveme", value="Surprime la signature ou enlève le code pour nous sauver de Delphine",
+                        inline=False)
+        embed.add_field(name="justifyme", value="Justifie ton absence, mais attention à Delphine",
                         inline=False)
         await ctx.send(embed=embed)
 
@@ -49,6 +51,10 @@ class Commands(commands.Cog):
     @commands.command()
     async def saveme(self, ctx):
         await saveme_c(ctx)
+
+    @commands.command()
+    async def justifyme(self, ctx):
+        await justifyme_c(ctx)
 
     @commands.command()
     async def whosigned(self, ctx):

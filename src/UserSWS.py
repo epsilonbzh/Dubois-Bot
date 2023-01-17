@@ -14,6 +14,7 @@ class UserSWS:
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62"
 
     def __init__(self, name, code_etablisement, code_identifiant, code_pin, autosign):
+        self.date = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
         self.jbauth = None
         self.bearer = None
         self.name = name
@@ -74,13 +75,13 @@ class UserSWS:
         data = requests.get(url_check_classes, params=params, headers=headers).content.decode('utf-8')
         tojson = json.loads(data)
         res = {}
-        date = time.strftime("%Y-%m-%d", time.gmtime())
+        date2 = time.strftime("%Y-%m-%d", time.gmtime())
 
         for classe in tojson:
 
             id_classe = classe['id']
 
-            if classe['date'] == date:
+            if classe['date'] == date2:
                 res[id_classe] = {}
                 res[id_classe]['date'] = classe['date']
                 res[id_classe]['start'] = classe['start']
@@ -153,17 +154,21 @@ class UserSWS:
         if self.has_signed():
             raise SwsException("already sign")
 
-        date = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
-        json_signature = {"place": 44, "status": "present", "collectMode": "studentPortal", "collectedOn": date,
-                          "signedOn": date, "signer": self.get_signer(), "course": self.find_id_classe(),
+
+        json_signature = {"place": 44, "status": "present", "collectMode": "studentPortal", "collectedOn": self.date,
+                          "signedOn": self.date, "signer": self.get_signer(), "course": self.find_id_classe(),
                           "file": "data:image/png;base64," + self.get_signature()}
 
         self.send(json_signature=json_signature)
 
     def save(self):
-        date = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
-        json_signature = {"place": 44, "status": "oupsii", "collectMode": "studentPortal", "collectedOn": date,
-                          "signedOn": date, "signer": self.get_signer(), "course": self.find_id_classe()}
+        json_signature = {"place": 44, "status": "oupsii", "collectMode": "studentPortal", "collectedOn": self.date,
+                          "signedOn": self.date, "signer": self.get_signer(), "course": self.find_id_classe()}
+        self.send(json_signature=json_signature)
+
+    def justify(self):
+        json_signature = {"place": 44, "status": "justified","justified" : "1",  "collectMode": "studentPortal", "collectedOn": self.date,
+                          "signedOn": self.date, "signer": self.get_signer(), "course": self.find_id_classe()}
         self.send(json_signature=json_signature)
 
     def send(self, json_signature):

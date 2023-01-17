@@ -44,22 +44,9 @@ async def signall_c(ctx):
     await ctx.send("all signatures done")
 
 
-async def saveme_c(ctx):
-    try:
-        users = load_users()
-
-        for key, value in users.items():
-            if ctx.message.author.id == int(key):
-                value.save()
-                await ctx.send("<@" + str(ctx.message.author.id) + "> ouf on a eu chaud")
-
-    except Exception as err:
-        await ctx.send(err)
-
-
 async def signme_c(ctx):
     embed = discord.Embed(color=0xe67e22)
-    embed.title = "Who signed"
+    embed.title = "Sign me"
 
     try:
         users = load_users()
@@ -74,6 +61,34 @@ async def signme_c(ctx):
         await ctx.send(err)
 
     await ctx.send(embed=embed)
+
+async def saveme_c(ctx):
+    try:
+        users = load_users()
+
+        for key, value in users.items():
+            if ctx.message.author.id == int(key):
+                value.save()
+                with open('data/save_warning.png', 'rb') as f:
+                    picture = discord.File(f)
+                    await ctx.send("<@" + str(ctx.message.author.id) + "> ouf on a eu chaud",file=picture)
+
+    except Exception as err:
+        await ctx.send(err)
+
+async def justifyme_c(ctx):
+    try:
+        users = load_users()
+
+        for key, value in users.items():
+            if ctx.message.author.id == int(key):
+                value.justify()
+                with open('data/justify_warning.png', 'rb') as f:
+                    picture = discord.File(f)
+                    await ctx.send("<@" + str(ctx.message.author.id) +">",file=picture)
+
+    except Exception as err:
+        await ctx.send(err)
 
 
 async def whosigned_c(ctx):
